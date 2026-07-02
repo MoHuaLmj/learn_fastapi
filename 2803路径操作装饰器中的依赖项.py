@@ -30,3 +30,33 @@ async def read_items():
 
 # 这些依赖项将以与普通依赖项相同的方式执行/解析。
 # 但它们的值（如果它们有返回值）不会被传递给你的 路径操作函数。
+
+
+
+# ===== 依赖项错误和返回值 =====
+# 你可以使用平时使用的相同依赖 函数。
+
+
+# 依赖项需求
+# 它们可以声明请求需求（如请求头）或其他子依赖项
+
+# 引发异常
+# 这些依赖项可以 raise（引发）异常，与普通依赖项一样
+
+# 返回值
+# 它们可以返回或不返回值，无论如何，这些值都不会被使用
+from typing import Annotated
+from fastapi import Depends, FastAPI, Header, HTTPException
+
+async def verify_token(x_token: Annotated[str, Header()]):
+    if x_token != "fake-super-secret-token":
+        raise HTTPException(status_code=400, detail="X-Token header invalid")
+
+async def verify_key(x_key: Annotated[str, Header()]):
+    if x_key != "fake-super-secret-key":
+        raise HTTPException(status_code=400, detail="X-Key header invalid")
+    return x_key
+
+@app.get("/items/", dependencies=[Depends(verify_token), Depends(verify_key)])
+async def read_items():
+    return [{"item": "Foo"}, {"item": "Bar"}]
