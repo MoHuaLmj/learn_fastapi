@@ -1,0 +1,14 @@
+### 1. 只传必选的 session_id
+GET http://localhost:8000/items/
+Cookie: session_id=abc123
+
+### 2. 传入所有 Cookie
+GET http://localhost:8000/items/
+Cookie: session_id=abc123; fatebook_tracker=ft_value; googall_tracker=gt_value
+
+### 3. 缺失必填 session_id（预期 422）
+GET http://localhost:8000/items/
+
+### 4. 传入额外 Cookie（会被忽略，不会报错）
+GET http://localhost:8000/items/
+Cookie: session_id=abc123; extra_cookie=some_value
